@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+Exerício Programa 1
+MAP3121 - Métodos Numéricos e Aplicações
+
+Isabella Bologna - 9267161
+Renato Freitas - 9837708
+
+05/2020
+"""
+
 import sys
 import math
 from prompt_toolkit import prompt
@@ -72,6 +82,14 @@ if __name__ == '__main__':
                     L, D = nm.LDL_decomposition(A, B)
 
                     nm.implicit_euler_method(item, L, D)
+
+                    print("Calculando erro para esse método...")
+                    try:
+                        error = nm.implicit_euler_method_error(item, -1)
+                        print("Erro calculado: {:.2E}".format(error))
+                    except(NotImplementedError):
+                        print("Calculo do erro não implementado para esse item")
+
                     nm.plot_solution(item)
                 elif cmd == 'C':
                     A, B = nm.create_A_matrix(Lambda/2, N-1)

@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+Exerício Programa 1
+MAP3121 - Métodos Numéricos e Aplicações
+
+Isabella Bologna - 9267161
+Renato Freitas - 9837708
+
+05/2020
+"""
+
 import numpy as np
 from abc import abstractmethod
 

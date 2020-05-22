@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+"""
+Exerício Programa 1
+MAP3121 - Métodos Numéricos e Aplicações
+
+Isabella Bologna - 9267161
+Renato Freitas - 9837708
+
+05/2020
+"""
+
 import time
 import os
 import numpy as np
@@ -276,25 +286,22 @@ def crank_nicolson_method(Item: Problem, L, D):
     print("Tempo para a solucao: {:.4f} segundos".format(elapsed_time))
 
 
+def implicit_euler_method_error(Item: Problem, time):
+    '''Calculates the error between exact and approximate solution for the implicit Euler method
 
-'''
-b[i] = u[i] + dt*f(xi,tk+1)
+    Args:
+    -----
+        Item:
+        time: Exact time to get the error value
 
-z[i] = (b[i] - l[i] * z[i-1]) 
+    Returns:
+    --------
+        Max absolute error value at that time
+    '''
 
-y[1] = b[1]
-y[i] = [(b[i] - l[i] * (y[i-1] * d[i-1]))]  / d[i]  i=2...(N-1)
+    Item.exact_solution()
 
-u[i] = y[i] - ( l[i+1]*u[i+1])  i=(N-1)...1
-
-
-u[0] = g1 
-u[N] = g2
-
-
-'''
-
-def error(Item: Problem):
+    # Erro local de truncamento
     tau = np.array([[0] * (Item.N + 1)] * (Item.M + 1), dtype=float)
     
     for k in range(1, Item.M + 1):
@@ -303,6 +310,7 @@ def error(Item: Problem):
             tau[k-1][i] -= (Item.gabarito[k][i-1] - 2*Item.gabarito[k][i] + Item.gabarito[k][i+1]) / (Item.dx**2)
             tau[k-1][i] -= Item.heat_source(i*Item.dx, (k-1)*Item.dt)
 
+    # Erro
     e = np.array([[0] * (Item.N + 1)] * (Item.M + 1), dtype=float)
     
     for k in range(1, Item.M + 1):
