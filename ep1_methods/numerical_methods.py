@@ -50,6 +50,9 @@ def finite_difference_method_error(Item: Problem, time):
         Max absolute error value at that time
     '''
 
+    # Calcula a solução exata do problema
+    Item.exact_solution()
+
     # Erro local de truncamento
     tau = np.array([[0] * (Item.N + 1)] * (Item.M + 1), dtype=float)
     for k in range(1, Item.M + 1):

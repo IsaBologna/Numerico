@@ -33,6 +33,14 @@ if __name__ == '__main__':
                         print("Opcao invalida :(")
 
                 nm.finite_difference_method(item)
+
+                print("Calculando erro para esse método...")
+                try:
+                    error = nm.finite_difference_method_error(item, -1)
+                    print("Erro calculado: {:.2E}".format(error))
+                except(NotImplementedError):
+                    print("Calculo do erro não implementado para esse item")
+                
                 nm.plot_solution(item)
 
                 while True:
