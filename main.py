@@ -58,7 +58,7 @@ if __name__ == '__main__':
                     else:
                         print("Opcao invalida :(")
                 
-                cmd = prompt("Resolver com Euler ou Crank-Nicolson? [E / C]: ")
+                cmd = prompt("Resolver com Euler ou Crank-Nicolson? [E / C]: ").upper()
                 if cmd == 'E':
                     A, B = nm.create_A_matrix(Lambda, N-1)
                     L, D = nm.LDL_decomposition(A, B)

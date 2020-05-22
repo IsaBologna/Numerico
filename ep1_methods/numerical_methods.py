@@ -222,7 +222,7 @@ def crank_nicolson_method(Item: Problem, L, D):
         L:  array from the LDL decomposition
         D:  array from the LDL decomposition
     '''
-    print("Resolvendo o problema pelo método de Euler implicito...")
+    print("Resolvendo o problema pelo método de Crank-Nicolson ...")
 
     Item.initial_condition()
     Item.frontier_condition()
