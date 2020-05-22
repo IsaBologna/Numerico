@@ -4,17 +4,34 @@ import numpy as np
 from abc import abstractmethod
 
 class Problem:
+    '''Base class for multiple itens definitions
+
+    Attributes
+    ----------
+        N: defines dx space discretization
+        M: defines dt time discretization
+        Lambda: 
+        T: integration time period [0, T]
+        u: solution matrix
+        gabarito: exact solution matrix
+    ''' 
+
+
     def __init__(self, N, M, Lambda, T):
+        '''Inits Problem with chosen N, M, Lambda and T
+        '''
         self.N = N
         self.M = M
         self.Lambda = Lambda
         self.T = T
 
+        # Calulo de dx e dt
         self.dx = 1 / N
         self.dt = T / M
 
+        # Inicializacao matrizes M x N
         self.u = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float)
-        self.gabarito = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float) # array M x N 
+        self.gabarito = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float) 
 
     @abstractmethod
     def initial_condition(self):
@@ -34,11 +51,12 @@ class Problem:
 
     @abstractmethod
     def heat_source(self, x, t):
-        '''
-        Heat source function f(x,t)
+        '''Heat source function f(x,t)
         
-        @param x    Postition
-        @param t    Time
+        Args:
+        -----
+            x:   Postition
+            t:   Time
         '''
         raise NotImplementedError
 
