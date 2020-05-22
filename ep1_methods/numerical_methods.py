@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import time
+import os
 import numpy as np
 import plotly.graph_objects as go
 
@@ -24,16 +25,21 @@ def finite_difference_method(Item: Problem):
     Item.initial_condition()
     Item.frontier_condition()
 
+    begin_time = time.time()
+    # Implementação da equação (11)
     for k in range(1, Item.M + 1):
         for i in range(1, Item.N):
             Item.u[k][i] = Item.u[k - 1][i] 
             Item.u[k][i] += Item.dt * ((Item.u[k - 1][i - 1] - 2*Item.u[k - 1][i] + Item.u[k - 1][i + 1])/(Item.dx ** 2) + Item.heat_source(i*Item.dx, (k - 1)*Item.dt))
 
+    elapsed_time = time.time() - begin_time
+    print("Tempo para a solucao: {:.4f} segundos".format(elapsed_time))
+
     return Item.u
 
 def finite_difference_method_error(Item: Problem, time):
     '''Calculates the error between exact and approximate solution
-    
+
     Args:
     -----
         Item:
@@ -188,6 +194,7 @@ def implicit_euler_method(Item: Problem, L: np.array, D: np.array):
         
         return b
 
+    begin_time = time.time()
     # Loop principal da solução do sistema "[L][D][Lt] [x] = [b]" para cada tk, k=1...M
     for k in range(1, Item.M + 1):
         b = calc_b(k)
@@ -202,6 +209,8 @@ def implicit_euler_method(Item: Problem, L: np.array, D: np.array):
         for i in range(Item.N-2, 0, -1):
             Item.u[k][i] = y[i-1] - (L[i] * Item.u[k][i+1])
 
+    elapsed_time = time.time() - begin_time
+    print("Tempo para a solucao: {:.4f} segundos".format(elapsed_time))
 
 
 def crank_nicolson_method(Item: Problem, L, D):
@@ -243,6 +252,8 @@ def crank_nicolson_method(Item: Problem, L, D):
         
         return b
 
+    begin_time = time.time()
+
     # Loop principal da solução do sistema "[L][D][Lt] [x] = [b]" para cada tk, k=1...M
     for k in range(1, Item.M + 1):
         b = calc_b(k)
@@ -258,6 +269,8 @@ def crank_nicolson_method(Item: Problem, L, D):
             Item.u[k][i] = y[i-1] - (L[i] * Item.u[k][i+1])
 
 
+    elapsed_time = time.time() - begin_time
+    print("Tempo para a solucao: {:.4f} segundos".format(elapsed_time))
 
 
 
