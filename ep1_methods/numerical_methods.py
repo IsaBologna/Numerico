@@ -304,10 +304,9 @@ def error(Item: Problem):
             tau[k-1][i] -= Item.heat_source(i*Item.dx, (k-1)*Item.dt)
 
     e = np.array([[0] * (Item.N + 1)] * (Item.M + 1), dtype=float)
-    # !
+    
     for k in range(1, Item.M + 1):
         for i in range(1, Item.N):
-            e[k][i] = e[k-1][i]
-            e[k][i] += Item.dt * ((e[k-1][i-1] - 2*e[k-1][i] + e[k-1][i+1]) / (Item.dx**2) + tau[k-1][i])
+            e[k][i] = Item.gabarito[k][i] - Item.u[k][i] + tau[k][i]
 
-    return e
+    return max(abs(e[time]))
