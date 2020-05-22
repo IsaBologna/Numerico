@@ -71,6 +71,7 @@ class Problem:
 class Item_A1(Problem):
     def __init__(self, N, M, Lambda, T):
         super().__init__(N, M, Lambda, T)
+        self.item_name = 'A'
 
     def initial_condition(self):
         self.u[0] = [0] * len(self.u[0])
@@ -91,6 +92,7 @@ class Item_A1(Problem):
 class Item_A2(Problem):
     def __init__(self, N, M, Lambda, T):
         super().__init__(N, M, Lambda, T)
+        self.item_name = 'A'
 
     def initial_condition(self):
         for i in range(0, self.N + 1):
@@ -113,6 +115,7 @@ class Item_A2(Problem):
 class Item_B(Problem):
     def __init__(self, N, M, Lambda, T):
         super().__init__(N, M, Lambda, T)
+        self.item_name = 'B'
 
     def initial_condition(self):
         for i in range(0, self.N + 1):
@@ -135,10 +138,10 @@ class Item_B(Problem):
 class Item_C(Problem):
     def __init__(self, N, M, Lambda, T):
         super().__init__(N, M, Lambda, T)
+        self.item_name = 'C'
 
     def initial_condition(self):
         self.u[0] = [0] * len(self.u[0])
-        
 
     def frontier_condition(self):
         for i in self.u:

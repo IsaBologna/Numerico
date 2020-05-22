@@ -61,12 +61,23 @@ def finite_difference_method_error(Item: Problem, time):
 
     return max(abs(e[time]))
 
-def plot(u, dx, M, title="Solução"):
-    x_axis = np.arange(0, 1, dx)
+def plot_solution(Item: Problem):
+    '''Plots solution U every t=0.1s
 
-    step = int(M/10)
-    y_axis = u[::step]
+    Args:
+    -----
+        Item: 
+    '''
+
+    # Valores do eixo x
+    x_axis = np.arange(0, 1, Item.dx)
+
+    # Valores do eixo y: temperatura a cada 0.1s
+    step = int(Item.M/10)
+    y_axis = Item.u[::step]
     
+    plot_title = "Solução item {}, N = {}, M = {}, Lambda = {}".format(Item.item_name, Item.N, Item.M, Item.Lambda)
+    # Criação do gráfico
     plot = go.Figure()
     for i in range(len(y_axis)):
         plot.add_trace(go.Scatter(
@@ -77,14 +88,23 @@ def plot(u, dx, M, title="Solução"):
         ))
     plot.update_layout(xaxis_title='Comprimento',
                         yaxis_title='Temperatura',
-                        title=title,
+                        title=plot_title,
                         paper_bgcolor="white",
                         plot_bgcolor="white",
                         )
 
+    # Plot grid
     plot.layout['yaxis'].update(dict(showgrid=True, gridcolor='#e6e6e6'))
 
     plot.show()
+
+    # Salva gráfico .html
+    if not os.path.exists("images"):
+        os.mkdir("images")
+
+    file_name = "Item_{}_{}_{}.html".format(Item.item_name, Item.N, str(Item.Lambda).replace('.', ''))
+    plot.write_html("images/" + file_name)
+    print("Gráfico {} salvo na pasta images/".format(file_name))
 
 
 def create_A_matrix(l, size):
