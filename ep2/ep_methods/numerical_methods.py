@@ -5,39 +5,22 @@ import plotly.graph_objects as go
 
 from .tarefas import Problem
 
-# ! precisa modificar -> matriz A diferente
-def create_A_matrix(l, size): 
-    '''Creates a representation of A with two arrays
+# ****** METODO CRANK-NICOLSON ******
 
-    Args:
-    -----
-        l:    Lambda value
-        size: Size of one dimension of A
-
-    Returns:
-    --------
-        Matrix A represented as two arrays (A, B)
-    '''
-
-    A = np.array([1 + 2*l] * size, dtype=float)
-    B = np.array([-l] * size, dtype=float)
-
-    B[0] = 0  # valor l1 = 0
-
-    return A, B
-
-def LDL_decomposition(A, B):
+def LDL_decomposition(Item:Problem):
     '''LDLT decomposition of a matrix represented by two arrays
 
     Args:
     -----
-        A:  diagonal of the original matrix
-        B:  subdiagonal of the original matrix
-
     Returns:
     -------
         LDL decomposition represented as two arrays (L, D)
     '''
+
+    #* Creates a representation of A with two arrays (A, B)
+    A = np.array([1 + 2 * (Item.Lambda/2)] * Item.N, dtype=float)
+    B = np.array([-(Item.Lambda/2)] * Item.N, dtype=float)
+    B[0] = 0  # valor l1 = 0
 
     L = np.array([0] * len(A), dtype=float)
     D = np.array([0] * len(A), dtype=float)
@@ -52,9 +35,8 @@ def LDL_decomposition(A, B):
     
     return L, D
 
-# * METODO CRANK-NICOLSON 
-
 def crank_nicolson_method(Item: Problem, L, D):
+#todo adaptar contas para vetor pk-> arg passado no heat_source() ?
     '''Crank-Nicolson method implementation
 
     Args:
@@ -96,7 +78,7 @@ def crank_nicolson_method(Item: Problem, L, D):
     begin_time = time.time()
 
     # Loop principal da solução do sistema "[L][D][Lt] [x] = [b]" para cada tk, k=1...M
-    for k in range(1, Item.M + 1):
+    for k in range(1, Item.M + 1): 
         b = calc_b(k)
 
         # Primeiro, resolvemos [L][D] [y] = [b]
@@ -132,7 +114,9 @@ u[N] = g2
 
 '''
 
-def create_normal_system(uk): 
+#* Resolução Sistema Normal
+def create_normal_system(Item:Problem): 
+#todo
     '''Creates a representation of A with two arrays
 
     Args:
@@ -146,12 +130,26 @@ def create_normal_system(uk):
         Vector B:   <uT,uk> size k
     '''
 
-    A = np.array([[0] * nf] * nf, dtype=float)
-    B = np.array([0] * nf, dtype=float)
+    # A = np.array([[0] * nf] * nf, dtype=float)
+    # B = np.array([0] * nf, dtype=float)
 
-    # Calculo produto interno <u,v> = Σ(𝑖=1,𝑁−1) u(xi)v(xi)
-    for i in range(1,nf+1): # de 1 a nf
-        for j in range(1,nf+1):
-            
+    # # Calculo produto interno <u,v> = Σ(𝑖=1,𝑁−1) u(xi)v(xi)
+    # for i in range(1,nf+1): # de 1 a nf
+    #     for j in range(1,nf+1):            
+   
+    # return A, B
 
-    return A, B
+#***** Erro Quadrático *****
+def quatratic_error(Item: Problem): #? Por que ta aqui e não dentro da classe?
+    sum_calc = 0
+    diff_quad = 0 
+    #! rascunho 
+    for i in range(1,Item.N):
+        for k in range(1,Item.nf+1):
+            sum_calc += Item.a[k] * Item.u[Item.T][i * Item.dx]
+        diff_quad = ( Item.gabarito[i * Item.dx] - sum_calc )**2
+        sum_erro += diff_quad
+    
+    return sum_erro * Item.dx
+
+#todo pensar nos plots
