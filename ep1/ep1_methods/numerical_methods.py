@@ -197,7 +197,7 @@ def implicit_euler_method(Item: Problem, L: np.array, D: np.array):
     begin_time = time.time()
     # Loop principal da solução do sistema "[L][D][Lt] [x] = [b]" para cada tk, k=1...M
     for k in range(1, Item.M + 1):
-        b = calc_b(k)
+        b = calc_b(k) # calcula o vetor correspondente ao lado direito do sistema
 
         # Primeiro, resolvemos [L][D] [y] = [b]
         y[0] = b[0] / D[0]

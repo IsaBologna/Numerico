@@ -155,9 +155,6 @@ class Item_A2(Problem):
                 for i in range(0, self.N + 1):
                     self.gabarito[k][i] = (1 + np.sin(10*k*self.dt)) * ((i*self.dx)**2) * (1 - (i*self.dx))**2
 
-
-
-
 class Item_B(Problem):
     def __init__(self, N, L, T):
         super().__init__(N, L, T)
