@@ -36,7 +36,6 @@ def LDL_decomposition(Item:Problem):
     return L, D
 
 def crank_nicolson_method(Item: Problem, L, D):
-#todo adaptar contas para vetor pk-> arg passado no heat_source() ?
     '''Crank-Nicolson method implementation
 
     Args:

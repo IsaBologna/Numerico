@@ -40,7 +40,7 @@ class Problem:
         self.gabarito = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float)  # calculada a partir de self.u
         
         #todo vetor de coeficientes ak (intensidade das forças temporais)
-        self.a = np.array([0] * (self.nf+1), dtype=float)
+        self.a = np.array([0] * (self.nf), dtype=float)
 
     def r(self,t):
         '''
@@ -65,25 +65,22 @@ class Problem:
             i[-1] = 0
 
 
-    @abstractmethod
     def heat_source(self, x, t, p):
-        '''Heat source function f(x,t) = r(t) * gh(x)
+        '''Heat source pseudo function f(x,t) = r(t) * gh(x)
         
         Args:
         -----
             x:   Postition
             t:   Time
-        -----
-            pk: forçantes pontuais
-            (arg? ou pk em init e k como arg?)
-        '''
-        #? loop para todas as fontes pk? (arg?) 
-        # p = 0.25
-        if ((p - self.dx/2) <= x <= (p + self.dx/2)):
-            return self.r(t) * (1/self.dx) # gh(x) = 1/h 
-        else:
-            return 0
 
+        '''
+        fh = 0    
+        
+        for i in range(1,self.nf): #? não sei se é o melhor jeito de fazer
+            if ((self.p[i-1] - self.dx/2) <= x <= (self.p[i-1] + self.dx/2)):
+                fh = self.r(t) * (1/self.dx) # gh(x) = 1/h 
+
+        return fh
 
     @abstractmethod
     def exact_solution(self):
@@ -94,14 +91,15 @@ class Problem:
 # Em todos os testes utilizaremos T = 1 e 
 
 class Teste(Problem): #? rename
-    def __init__(self, N, T):
-        super().__init__(N, T)
-        self.item_name = 'A'
+    def __init__(self, N, T, p:np.ndarray):
+        super().__init__(N, T, p)
+        self.item_name = 'A' # ? 
 
     # r(self,t)
  
     def exact_solution(self):
-        # gabarito = a1 * u1 + a2 * u2 ... 
+        # gabarito = a1 * u1 + a2 * u2 ...
+        # gabarito = 7*u -> a=7 
         return
 
 
