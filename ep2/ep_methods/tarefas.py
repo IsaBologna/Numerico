@@ -36,8 +36,10 @@ class Problem:
         self.nf = len(p)
 
         # Inicializacao matrizes M x N
-        self.u = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float)
-        self.gabarito = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float)  # calculada a partir de self.u
+        self.u = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float) # auxiliar para o método de Nicolson
+        
+        self.uk = np.array([[0] * (self.N + 1)] * (self.nf), dtype=float) # vetores uk(T,xi) 
+        self.gabarito = np.array([[0] * (self.N + 1)] * (self.nf), dtype=float)  # calculada a partir de self.uk
         
         #todo vetor de coeficientes ak (intensidade das forças temporais)
         self.a = np.array([0] * (self.nf), dtype=float)
@@ -65,22 +67,20 @@ class Problem:
             i[-1] = 0
 
 
-    def heat_source(self, x, t, p):
-        '''Heat source pseudo function f(x,t) = r(t) * gh(x)
+    def heat_source(self, x, t, k):
+        '''Heat source (pseudo) function f(x,t) = r(t) * gh(x)
         
         Args:
         -----
             x:   Postition
             t:   Time
-
-        '''
-        fh = 0    
+            k:   Índice do vetor de pontos pk para o cálculo de gh(x)
+        ''' 
         
-        for i in range(1,self.nf): #? não sei se é o melhor jeito de fazer
-            if ((self.p[i-1] - self.dx/2) <= x <= (self.p[i-1] + self.dx/2)):
-                fh = self.r(t) * (1/self.dx) # gh(x) = 1/h 
-
-        return fh
+        if ((self.p[k] - self.dx/2) <= x <= (self.p[k] + self.dx/2)):
+            return self.r(t) * (1/self.dx) # gh(x) = 1/h 
+        else: 
+            return 0
 
     @abstractmethod
     def exact_solution(self):
@@ -99,8 +99,23 @@ class Teste(Problem): #? rename
  
     def exact_solution(self):
         # gabarito = a1 * u1 + a2 * u2 ...
-        # gabarito = 7*u -> a=7 
-        return
+        self.gabarito = 7.0 * self.uk
+
+
+class Teste_B(Problem): #? rename
+    def __init__(self, N, T, p:np.ndarray):
+        super().__init__(N, T, p)
+        self.item_name = 'A' # ? 
+
+    # r(self,t)
+ 
+    def exact_solution(self):
+        # gabarito = a1 * u1 + a2 * u2 ...
+        # 2.3u1(T, xi) + 3.7u2(T, xi) + 0.3u3(T, xi) + 4.2u4(T, xi)
+        self.gabarito[0] = 2.3 * self.uk[0]
+        self.gabarito[1] = 3.7 * self.uk[1]
+        self.gabarito[2] = 0.3 * self.uk[2]
+        self.gabarito[3] = 4.2 * self.uk[3]
 
 
    
