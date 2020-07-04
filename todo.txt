@@ -1,5 +1,5 @@
 uT -> gabarito
-us (T,xi) -> calculado pelo Nicolson
+uk -> us (T,xi) -> calculado pelo Nicolson
 u(t=T,xi) -> ultimo vetor da matriz com N elementos
 
 pra cada s em p1,p2...pnf

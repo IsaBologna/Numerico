@@ -39,7 +39,7 @@ class Problem:
         self.u = np.array([[0] * (self.N + 1)] * (self.M + 1), dtype=float) # auxiliar para o método de Nicolson
         
         self.uk = np.array([[0] * (self.N + 1)] * (self.nf), dtype=float) # vetores uk(T,xi) 
-        self.gabarito = np.array([[0] * (self.N + 1)] * (self.nf), dtype=float)  # calculada a partir de self.uk
+        self.gabarito = np.array([0] * (self.N + 1), dtype=float)  # calculada a partir de self.uk
         
         #todo vetor de coeficientes ak (intensidade das forças temporais)
         self.a = np.array([0] * (self.nf), dtype=float)
@@ -112,10 +112,17 @@ class Teste_B(Problem): #? rename
     def exact_solution(self):
         # gabarito = a1 * u1 + a2 * u2 ...
         # 2.3u1(T, xi) + 3.7u2(T, xi) + 0.3u3(T, xi) + 4.2u4(T, xi)
-        self.gabarito[0] = 2.3 * self.uk[0]
-        self.gabarito[1] = 3.7 * self.uk[1]
-        self.gabarito[2] = 0.3 * self.uk[2]
-        self.gabarito[3] = 4.2 * self.uk[3]
+        self.gabarito = 2.3 * self.uk[0] + 3.7 * self.uk[1] + 0.3 * self.uk[2] + 4.2 * self.uk[3]
 
+class Teste_C(Problem): #? rename
+    def __init__(self, N, T, p:np.ndarray):
+        super().__init__(N, T, p)
+        self.item_name = 'C' # ? 
 
-   
+    # r(self,t)
+ 
+    def exact_solution(self, uT:np.ndarray):
+        # self.gabarito = np.zeros(self.N) # muda pra um vetor 1xN
+        coef=int(2048/self.N)
+        for i in range(0,self.N):
+            self.gabarito[i] = uT[i*coef]

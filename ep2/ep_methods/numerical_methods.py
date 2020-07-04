@@ -116,7 +116,7 @@ def matrix_uk(Item:Problem):
     '''
     for s in range(0,Item.nf):
         crank_nicolson_method(Item, s)
-        Item.uk[s] = Item.u[Item.T]
+        Item.uk[s] = Item.u[-1]
         Item.u = np.zeros((Item.N+1,Item.M+1)) #? zerar elementos u
 
 #* Resolução Sistema Normal
@@ -128,7 +128,7 @@ def solve_normal_system(Item:Problem):
     A = np.zeros((Item.nf, Item.nf))
     B = np.zeros(Item.nf)
 
-    Item.exact_solution() #calcula uT a partir de uk
+    # Item.exact_solution() #calcula uT a partir de uk
 
     #* Calculo produto interno <u,v> = Σ(𝑖=1,𝑁−1) u(xi)v(xi)
 
@@ -140,7 +140,7 @@ def solve_normal_system(Item:Problem):
 
     # vector B
     for i in range(0,Item.nf):
-        B[i] = np.vdot(Item.gabarito[i], Item.uk[i])
+        B[i] = np.vdot(Item.gabarito, Item.uk[i])
     # print(B)
     
 
@@ -187,11 +187,17 @@ def solve_normal_system(Item:Problem):
         Item.a[i] = (y[i] - sum_x)
 
 #***** Erro Quadrático *****
-def quatratic_error(Item: Problem): #? Por que ta aqui e não dentro da classe?
-    sum_mmq = 0.0
-    for k in range(0, Item.nf):
-        for i in range(0, Item.N-1 ):        
-            # print(Item.uk[k][i])
-            sum_mmq += ( Item.gabarito[k][i] - (Item.a[k] * Item.uk[k][i]) )**2
+def quatratic_error(Item: Problem): 
+    
+    calc_solution = 0
+    for k in range(0,Item.nf):
+        calc_solution += Item.a[k] * Item.u[k]
+
+    sum_mmq = 0
+    for i in range(0,Item.N):
+        sum_mmq += (Item.gabarito[i] - calc_solution[i])**2
+
     return math.sqrt(Item.dx * sum_mmq)
+
+
 #todo pensar nos plots
