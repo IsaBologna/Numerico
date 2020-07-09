@@ -121,44 +121,47 @@ def matrix_uk(Item:Problem):
 
 #* Resolução Sistema Normal
 def solve_normal_system(Item:Problem): 
-#todo
     '''
+    Resolução do sistema normal para encontrar os coeficientes ak
+    ----
+
     '''
     
+    #* Matrizes para o sistema da forma Ax = B
     A = np.zeros((Item.nf, Item.nf))
     B = np.zeros(Item.nf)
 
     # Item.exact_solution() #calcula uT a partir de uk
 
     #* Calculo produto interno <u,v> = Σ(𝑖=1,𝑁−1) u(xi)v(xi)
-
-    # Matriz A 
     for i in range(0,Item.nf):
+        B[i] = np.vdot(Item.gabarito, Item.uk[i])
         for j in range(0,Item.nf): #? dava pra fazer melhor acho
             A[i][j] = np.vdot(Item.uk[i], Item.uk[j])
     # print(A)
-
-    # vector B
-    for i in range(0,Item.nf):
-        B[i] = np.vdot(Item.gabarito, Item.uk[i])
     # print(B)
     
-
     #* Decomposição LDLt
     D = np.zeros((Item.nf, Item.nf))
     L = np.zeros((Item.nf, Item.nf))
 
-    ld = 0
-    ldl = 0
-    for i in range(0,Item.nf): # inverter i e j nas equações (prometo que faz sentido... ou n)
-        for j in range(0,Item.nf): #??
+    for i in range(0, Item.nf):
+        for j in range(0, i+1):
+            if i == j:
+                L[i][i] = 1.0  # Diagonal principal de L = 1
 
-            for k in range(0,i-1): # somatorias
-                ld += L[i][k]**2 * D[k][k]
-                ldl += L[j][k] * D[k][k] * L[i][k]
+                ld = 0.0
+                for k in range(0, j):
+                    ld += L[j][k]**2 * D[k][k]
+                D[j][j] = A[j][j] - ld
 
-            D[i][i] = A[i][i] - ld 
-            L[j][i] = (A[j][i] - ldl) / D[i][i]
+            else:
+                ldl = 0.0
+                for k in range(0, j):
+                    ldl += L[i][k] * D[k][k] * L[j][k]
+                L[i][j] = (A[i][j] - ldl) / D[j][j]
+    # print(D)
+    # print(L)
     
     #* Resolver o sistema
     ''' 
@@ -173,17 +176,18 @@ def solve_normal_system(Item:Problem):
     '''
     # (I):
     y = np.zeros(Item.nf)
-    for i in range(0,Item.nf):
+    for i in range(0, Item.nf):
         sum_y = 0.0
-        for k in range(0,i-1):
+        for k in range(0, i):
             sum_y += (L[i][k] * (y[k] * D[k][k]))
         y[i] = ( B[i] - sum_y)/ D[i][i]
+        # y[i] = z[i] / D[i][i]
     
     # (II):
-    for i in range(Item.nf-1,-1,-1): #wtf 
+    for i in range(Item.nf-1, -1, -1): #wtf 
         sum_x = 0.0
-        for k in range(i,Item.nf): # só entra em i>nf
-            sum_x += L[k][i] * Item.a[i]
+        for k in range(i+1, Item.nf): # só entra em i<nf
+            sum_x += L[k][i] * Item.a[k]
         Item.a[i] = (y[i] - sum_x)
 
 #***** Erro Quadrático *****
