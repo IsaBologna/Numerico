@@ -22,7 +22,7 @@ class Problem:
         '''Inits Problem with chosen N, M, Lambda and T
         '''
         self.N = N
-        self.M = N #!
+        self.M = N
         self.T = T
 
         # Calulo de dx e dt
@@ -46,7 +46,7 @@ class Problem:
 
     def r(self,t):
         '''
-        função da variação temporal das forçantes r(t) = 10(1 + cos(5t))
+        Função da variação temporal das forçantes r(t) = 10(1 + cos(5t))
         '''
         return 10*(1 + math.cos(5*t))
 
@@ -90,22 +90,22 @@ class Problem:
 
 # Em todos os testes utilizaremos T = 1 e 
 
-class Teste(Problem): #? rename
+class Teste_A(Problem): #? rename
     def __init__(self, N, T, p:np.ndarray):
         super().__init__(N, T, p)
-        self.item_name = 'A' # ? 
+        self.item_name = 'A'
 
     # r(self,t)
  
     def exact_solution(self):
         # gabarito = a1 * u1 + a2 * u2 ...
-        self.gabarito = 7.0 * self.uk
+        self.gabarito = 7.0 * self.uk[0]
 
 
 class Teste_B(Problem): #? rename
     def __init__(self, N, T, p:np.ndarray):
         super().__init__(N, T, p)
-        self.item_name = 'A' # ? 
+        self.item_name = 'B'
 
     # r(self,t)
  
@@ -117,7 +117,20 @@ class Teste_B(Problem): #? rename
 class Teste_C(Problem): #? rename
     def __init__(self, N, T, p:np.ndarray):
         super().__init__(N, T, p)
-        self.item_name = 'C' # ? 
+        self.item_name = 'C'
+
+    # r(self,t)
+ 
+    def exact_solution(self, uT:np.ndarray):
+        # self.gabarito = np.zeros(self.N) # muda pra um vetor 1xN
+        coef=int(2048/self.N)
+        for i in range(0,self.N):
+            self.gabarito[i] = uT[i*coef]
+
+class Teste_D(Problem): #? rename
+    def __init__(self, N, T, p:np.ndarray):
+        super().__init__(N, T, p)
+        self.item_name = 'D'
 
     # r(self,t)
  
