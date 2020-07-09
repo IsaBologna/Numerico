@@ -192,6 +192,29 @@ def solve_normal_system(Item:Problem):
 
 #***** Erro Quadrático *****
 def quatratic_error(Item: Problem): 
+    '''
+    Calculo do Erro Quadratico
+    '''
+    sum_mmq = 0
+    for i in range(1, Item.N - 1):
+        calc_solution = 0.0
+        for k in range(0, Item.nf):
+            calc_solution += Item.a[k] * Item.uk[k][i]
+
+        sum_mmq += (Item.gabarito[i]- calc_solution) ** 2
+
+    return math.sqrt(Item.dx * sum_mmq)
+
+    # calc_solution = 0
+    # for k in range(0, Item.nf):
+    #     calc_solution += Item.a[k] * Item.uk[k]
+
+    # sum_mmq = 0
+    # for i in range(1, Item.N - 1):
+    #     sum_mmq += (Item.gabarito[i] - calc_solution[i])**2
+
+    # return math.sqrt(Item.dx * sum_mmq)
+
     
     calc_solution = 0
     for k in range(0,Item.nf):
