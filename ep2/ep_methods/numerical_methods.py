@@ -74,7 +74,7 @@ def crank_nicolson_method(Item: Problem, s):
 
     begin_time = time.time()
 
-    # Loop principal da solução do sistema "[L][D][Lt] [x] = [b]" para cada tk, k=1...M
+    #* Loop principal da solução do sistema "[L][D][Lt] [x] = [b]" para cada tk, k=1...M
     for k in range(1, Item.M + 1): 
         b = calc_b(k)
 
@@ -89,35 +89,21 @@ def crank_nicolson_method(Item: Problem, s):
             Item.u[k][i] = y[i-1] - (L[i] * Item.u[k][i+1])
 
 
-    elapsed_time = time.time() - begin_time
+    # elapsed_time = time.time() - begin_time
     # print("Tempo para a solucao: {:.4f} segundos".format(elapsed_time))
 
 
-
-'''
-b[i] = u[i] + dt*f(xi,tk+1)
-
-z[i] = (b[i] - l[i] * z[i-1]) 
-
-y[1] = b[1]
-y[i] = [(b[i] - l[i] * (y[i-1] * d[i-1]))]  / d[i]  i=2...(N-1)
-
-u[i] = y[i] - ( l[i+1]*u[i+1])  i=(N-1)...1
-
-
-u[0] = g1 
-u[N] = g2
-
-
-'''
 #**** Cálculo dos Vetores uk
 def matrix_uk(Item:Problem):
-    ''' Create the matrix uk(T,xi) 
+    ''' 
+    Cria a matriz uk(T,xi) 
+    ----
+    Aproximações da solução usando o método de Crank-Nicolson para cada fonte de calor em pk
     '''
-    for s in range(0,Item.nf):
+    for s in range(0, Item.nf):
         crank_nicolson_method(Item, s)
         Item.uk[s] = Item.u[-1]
-        Item.u = np.zeros((Item.N+1,Item.M+1)) #? zerar elementos u
+        Item.u = np.zeros((Item.N+1,Item.M+1))  # zerar elementos u
 
 #* Resolução Sistema Normal
 def solve_normal_system(Item:Problem): 
@@ -133,14 +119,14 @@ def solve_normal_system(Item:Problem):
 
     # Item.exact_solution() #calcula uT a partir de uk
 
-    #* Calculo produto interno <u,v> = Σ(𝑖=1,𝑁−1) u(xi)v(xi)
+    #* Calculo produto interno <u,v> = Σ(𝑖=1,𝑁−1) u(xi)v(xi) 
     for i in range(0,Item.nf):
         B[i] = np.vdot(Item.gabarito, Item.uk[i])
         for j in range(0,Item.nf): #? dava pra fazer melhor acho
             A[i][j] = np.vdot(Item.uk[i], Item.uk[j])
     # print(A)
     # print(B)
-    
+
     #* Decomposição LDLt
     D = np.zeros((Item.nf, Item.nf))
     L = np.zeros((Item.nf, Item.nf))
@@ -162,7 +148,7 @@ def solve_normal_system(Item:Problem):
                 L[i][j] = (A[i][j] - ldl) / D[j][j]
     # print(D)
     # print(L)
-    
+
     #* Resolver o sistema
     ''' 
     Loop principal de resolução do sistema L.D.Lt * ak = b
@@ -191,7 +177,7 @@ def solve_normal_system(Item:Problem):
         Item.a[i] = (y[i] - sum_x)
 
 #***** Erro Quadrático *****
-def quatratic_error(Item: Problem): 
+def quatratic_error(Item: Problem):
     '''
     Calculo do Erro Quadratico
     '''
@@ -215,16 +201,57 @@ def quatratic_error(Item: Problem):
 
     # return math.sqrt(Item.dx * sum_mmq)
 
+
+def plot_solution(Item: Problem):
+    '''
+    Grafico contendo a solução calculada e a proveniente do arquivo, em T = 1
+    '''
+
+    # Valores do eixo X
+    x_axis = np.arange(0, 1, Item.dx)
+
+    plot_title = "Solução item {}, com N = {}".format(Item.item_name, Item.N)
+
+    # Criação do gráfico
+    plot = go.Figure()
     
-    calc_solution = 0
-    for k in range(0,Item.nf):
-        calc_solution += Item.a[k] * Item.u[k]
+    #* Dados de uT provenientes do arquivo fornecido
+    plot.add_trace(go.Scatter(
+        x = x_axis,
+        y = Item.gabarito,
+        line = dict(width=2),
+        name = "Arquivo"
+    ))
 
-    sum_mmq = 0
-    for i in range(0,Item.N):
-        sum_mmq += (Item.gabarito[i] - calc_solution[i])**2
+    #* Solucao calculada com os coeficientes das intesidades recuperadas
+    _solucao_calculada = np.zeros(Item.N+1)
+    for k in range(0, Item.nf):
+        _solucao_calculada += Item.a[k] * Item.uk[k]  # uT = Σ(ak * uk(T))
 
-    return math.sqrt(Item.dx * sum_mmq)
+    plot.add_trace(go.Scatter(
+        x = x_axis,
+        y = _solucao_calculada,
+        line = dict(width=2),
+        name = "Solução Recuperada"
+    ))
 
+    plot.update_layout(
+        xaxis_title = 'Comprimento',
+        yaxis_title = 'Temperatura',
+        title = plot_title,
+        paper_bgcolor = "white",
+        plot_bgcolor = "white"
+    )
 
-#todo pensar nos plots
+    # Plot grid
+    plot.layout['yaxis'].update(dict(showgrid=True, gridcolor='#e6e6e6'))
+
+    plot.show()
+
+     # Salva gráfico .html
+    if not os.path.exists("images"):
+        os.mkdir("images")
+
+    file_name = "Item_{}_{}.html".format(Item.item_name, Item.N)
+    plot.write_html("images/" + file_name)
+    print("Gráfico {} salvo na pasta images/".format(file_name))
