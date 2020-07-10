@@ -1,6 +1,6 @@
-import time
-import os
+#!/usr/bin/env python3
 
+import os
 import math
 import numpy as np
 import plotly.graph_objects as go
@@ -23,7 +23,6 @@ def crank_nicolson_method(Item: Problem, s):
 
     y = np.array([0] * (Item.N - 1), dtype=float)
 
-    #? tirar da função
     def LDL_decomposition():
         '''
         LDLT decomposition of a matrix represented by two arrays
@@ -72,8 +71,6 @@ def crank_nicolson_method(Item: Problem, s):
         
         return b
 
-    begin_time = time.time()
-
     #* Loop principal da solução do sistema "[L][D][Lt] [x] = [b]" para cada tk, k=1...M
     for k in range(1, Item.M + 1): 
         b = calc_b(k)
@@ -89,9 +86,6 @@ def crank_nicolson_method(Item: Problem, s):
             Item.u[k][i] = y[i-1] - (L[i] * Item.u[k][i+1])
 
 
-    # elapsed_time = time.time() - begin_time
-    # print("Tempo para a solucao: {:.4f} segundos".format(elapsed_time))
-
 
 #**** Cálculo dos Vetores uk
 def matrix_uk(Item:Problem):
@@ -103,6 +97,7 @@ def matrix_uk(Item:Problem):
     for s in range(0, Item.nf):
         crank_nicolson_method(Item, s)
         Item.uk[s] = Item.u[-1]
+        # print(Item.uk)
         Item.u = np.zeros((Item.N+1,Item.M+1))  # zerar elementos u
 
 #* Resolução Sistema Normal
@@ -117,12 +112,10 @@ def solve_normal_system(Item:Problem):
     A = np.zeros((Item.nf, Item.nf))
     B = np.zeros(Item.nf)
 
-    # Item.exact_solution() #calcula uT a partir de uk
-
     #* Calculo produto interno <u,v> = Σ(𝑖=1,𝑁−1) u(xi)v(xi) 
-    for i in range(0,Item.nf):
+    for i in range(0, Item.nf):
         B[i] = np.vdot(Item.gabarito, Item.uk[i])
-        for j in range(0,Item.nf): #? dava pra fazer melhor acho
+        for j in range(0,Item.nf): 
             A[i][j] = np.vdot(Item.uk[i], Item.uk[j])
     # print(A)
     # print(B)
@@ -146,8 +139,12 @@ def solve_normal_system(Item:Problem):
                 for k in range(0, j):
                     ldl += L[i][k] * D[k][k] * L[j][k]
                 L[i][j] = (A[i][j] - ldl) / D[j][j]
-    # print(D)
+    # print("Matriz L:")
     # print(L)
+    # print(" ")
+    # print("Matriz D:")
+    # print(D)
+    # print(" ")
 
     #* Resolver o sistema
     ''' 
@@ -167,10 +164,9 @@ def solve_normal_system(Item:Problem):
         for k in range(0, i):
             sum_y += (L[i][k] * (y[k] * D[k][k]))
         y[i] = ( B[i] - sum_y)/ D[i][i]
-        # y[i] = z[i] / D[i][i]
     
     # (II):
-    for i in range(Item.nf-1, -1, -1): #wtf 
+    for i in range(Item.nf-1, -1, -1): 
         sum_x = 0.0
         for k in range(i+1, Item.nf): # só entra em i<nf
             sum_x += L[k][i] * Item.a[k]
@@ -191,16 +187,6 @@ def quatratic_error(Item: Problem):
 
     return math.sqrt(Item.dx * sum_mmq)
 
-    # calc_solution = 0
-    # for k in range(0, Item.nf):
-    #     calc_solution += Item.a[k] * Item.uk[k]
-
-    # sum_mmq = 0
-    # for i in range(1, Item.N - 1):
-    #     sum_mmq += (Item.gabarito[i] - calc_solution[i])**2
-
-    # return math.sqrt(Item.dx * sum_mmq)
-
 
 def plot_solution(Item: Problem):
     '''
@@ -219,7 +205,7 @@ def plot_solution(Item: Problem):
     plot.add_trace(go.Scatter(
         x = x_axis,
         y = Item.gabarito,
-        line = dict(width=2),
+        line = dict(width=6),
         name = "Arquivo"
     ))
 

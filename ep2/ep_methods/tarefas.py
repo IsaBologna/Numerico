@@ -17,8 +17,7 @@ class Problem:
         gabarito: exact solution matrix
     ''' 
 
-
-    def __init__(self, N, T, p:np.ndarray): #? tirar lambda e M pois N = M sempre. Incluir p
+    def __init__(self, N, T, p:np.ndarray):
         '''Inits Problem with chosen N, M, Lambda and T
         '''
         self.N = N
@@ -68,17 +67,17 @@ class Problem:
 
 
     def heat_source(self, x, t, k):
-        '''Heat source (pseudo) function f(x,t) = r(t) * gh(x)
+        '''Heat source function f(x,t) = r(t) * gh(x)
         
         Args:
         -----
-            x:   Postition
-            t:   Time
+            x:   Posição
+            t:   Tempo
             k:   Índice do vetor de pontos pk para o cálculo de gh(x)
         ''' 
         
         if ((self.p[k] - self.dx/2) <= x <= (self.p[k] + self.dx/2)):
-            return self.r(t) * (1/self.dx) # gh(x) = 1/h 
+            return self.r(t) * (1/self.dx)  # gh(x) = 1/h 
         else: 
             return 0
 
@@ -88,38 +87,32 @@ class Problem:
 
     
 
-# Em todos os testes utilizaremos T = 1 e 
+# Em todos os testes utilizaremos T = 1 
 
-class Teste_A(Problem): #? rename
+class Teste_A(Problem):
     def __init__(self, N, T, p:np.ndarray):
         super().__init__(N, T, p)
         self.item_name = 'A'
-
-    # r(self,t)
  
     def exact_solution(self):
         # gabarito = a1 * u1 + a2 * u2 ...
         self.gabarito = 7.0 * self.uk[0]
 
 
-class Teste_B(Problem): #? rename
+class Teste_B(Problem):
     def __init__(self, N, T, p:np.ndarray):
         super().__init__(N, T, p)
         self.item_name = 'B'
-
-    # r(self,t)
  
     def exact_solution(self):
         # gabarito = a1 * u1 + a2 * u2 ...
         # 2.3u1(T, xi) + 3.7u2(T, xi) + 0.3u3(T, xi) + 4.2u4(T, xi)
         self.gabarito = 2.3 * self.uk[0] + 3.7 * self.uk[1] + 0.3 * self.uk[2] + 4.2 * self.uk[3]
 
-class Teste_C(Problem): #? rename
+class Teste_C(Problem):
     def __init__(self, N, T, p:np.ndarray):
         super().__init__(N, T, p)
         self.item_name = 'C'
-
-    # r(self,t)
  
     def exact_solution(self, uT:np.ndarray):
         # self.gabarito = np.zeros(self.N) # muda pra um vetor 1xN
@@ -127,15 +120,13 @@ class Teste_C(Problem): #? rename
         for i in range(0,self.N):
             self.gabarito[i] = uT[i*coef]
 
-class Teste_D(Problem): #? rename
+class Teste_D(Problem):
     def __init__(self, N, T, p:np.ndarray):
         super().__init__(N, T, p)
         self.item_name = 'D'
-
-    # r(self,t)
  
     def exact_solution(self, uT:np.ndarray):
         # self.gabarito = np.zeros(self.N) # muda pra um vetor 1xN
-        coef=int(2048/self.N)
+        coef = int(2048/self.N)
         for i in range(0,self.N):
             self.gabarito[i] = uT[i*coef]
