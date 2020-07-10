@@ -3,13 +3,13 @@
 ## EP2
 
 ### Para instalar dependências:  
-    ```bash
-    $ pip install -r requirements.txt
-    ```
+```bash
+$ pip install -r requirements.txt
+```
 ### Para executar:
-    ```bash
-    $ python3 main.py
-    ```
+```bash
+$ python3 main.py
+```
 
 - O programa irá pedir para o usuário digitar qual teste deseja executar (a, b, c ou d).
 
